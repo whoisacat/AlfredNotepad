@@ -1,5 +1,10 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 abstract class MyMenuBarBuilder extends JMenuBar{
 
@@ -30,9 +35,17 @@ abstract class MyMenuBarBuilder extends JMenuBar{
 
         mOpenExistingFileItem = new JMenuItem("Open existing file");
         mOpenExistingFileItem.addActionListener(e->{
+
             JFileChooser fileChooser = new JFileChooser();
-            String fullFileName = getFullFileNameFromFileDialog();
-            openFile(fullFileName);
+            int ret = fileChooser.showDialog(null,"Open file");
+            if (ret == JFileChooser.APPROVE_OPTION){
+                try{
+                    String fullFileName = fileChooser.getSelectedFile().getCanonicalPath();
+                    openFile(fullFileName);
+                } catch(IOException e1){
+                    e1.printStackTrace();
+                }
+            }
         });
 
         mSaveFileItem = new JMenuItem("Save file");

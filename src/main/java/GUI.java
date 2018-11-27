@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.event.*;
 import java.io.IOException;
 
@@ -31,9 +32,9 @@ public abstract class GUI{
             }
         }.build();
 
-        mJFrame = new JFrame();
+        mJFrame = new JFrame("AlfredNotepad");
         mJFrame.setJMenuBar(mMenuBar);
-
+//        mJFrame.
         mJFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mJFrame.setSize(300, 300);
         mJFrame.setVisible(true);
