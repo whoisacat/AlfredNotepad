@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import java.awt.event.*;
 import java.io.IOException;
 
@@ -12,6 +11,27 @@ public abstract class GUI{
     public GUI(){
 
         mMenuBar = new MyMenuBarBuilder(){
+
+            @Override protected void delText(){
+                mJTextArea.replaceSelection("");
+            }
+
+            @Override protected void pastText(){
+                mJTextArea.paste();
+            }
+
+            @Override protected void copyText(){
+                mJTextArea.copy();
+            }
+
+            @Override protected void cutText(){
+                mJTextArea.cut();
+            }
+
+            @Override protected String getFileDir(){
+                return getDirOfExisting();
+            }
+
             protected void openFile(String fullFileName){
                 String text = getTextFromExisting(fullFileName);
                 makeWrightableTextArea();
@@ -34,7 +54,6 @@ public abstract class GUI{
 
         mJFrame = new JFrame("AlfredNotepad");
         mJFrame.setJMenuBar(mMenuBar);
-//        mJFrame.
         mJFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mJFrame.setSize(300, 300);
         mJFrame.setVisible(true);
@@ -55,8 +74,6 @@ public abstract class GUI{
             }
         });
     }
-
-    protected abstract String getFileContent() throws IOException;
 
     private void onClosingWindow(){
         int result = JOptionPane.showConfirmDialog(null, "Should I save the changes?", "Closing the app", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -84,6 +101,8 @@ public abstract class GUI{
         mJFrame.setVisible(true);
     }
 
+    abstract String getDirOfExisting();
+    abstract String getFileContent() throws IOException;
     abstract String getTextFromExisting(String fullFileName);
     abstract void stopApp(boolean save, String text);
     abstract void wrightInFile(String s);

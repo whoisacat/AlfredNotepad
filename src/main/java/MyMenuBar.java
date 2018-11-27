@@ -1,9 +1,5 @@
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 
 abstract class MyMenuBarBuilder extends JMenuBar{
@@ -28,16 +24,20 @@ abstract class MyMenuBarBuilder extends JMenuBar{
 
         mCreateNewFileItem = new JMenuItem("Create new file");
         mCreateNewFileItem.addActionListener(e->{
-            String fullFileName = getFullFileNameFromFileDialog();
-            createOrRecreateFile(fullFileName);
-            createTextArea();
+            JFileChooser fileChooser = new JFileChooser();
+            int ret = fileChooser.showDialog(null,"Ok");
+            if(ret == JFileChooser.APPROVE_OPTION){
+                String fullFileName = fileChooser.getSelectedFile().getAbsolutePath();
+                createOrRecreateFile(fullFileName);
+                createTextArea();
+            }
         });
 
         mOpenExistingFileItem = new JMenuItem("Open existing file");
         mOpenExistingFileItem.addActionListener(e->{
 
             JFileChooser fileChooser = new JFileChooser();
-            int ret = fileChooser.showDialog(null,"Open file");
+            int ret = fileChooser.showOpenDialog(null);
             if (ret == JFileChooser.APPROVE_OPTION){
                 try{
                     String fullFileName = fileChooser.getSelectedFile().getCanonicalPath();
@@ -53,9 +53,16 @@ abstract class MyMenuBarBuilder extends JMenuBar{
 
         mSaveFileAsItem = new JMenuItem("Save file as...");
         mSaveFileAsItem.addActionListener(e->{
-            String fullFileName = getFullFileNameFromFileDialog();
-            createOrRecreateFile(fullFileName);
-            saveFile();
+            try{
+                JFileChooser fileChooser = new JFileChooser(getFileDir());
+                if(fileChooser.showDialog(null,"Save as") == JFileChooser.APPROVE_OPTION){
+                    String fullFileName = fileChooser.getSelectedFile().getCanonicalPath();
+                    createOrRecreateFile(fullFileName);
+                    saveFile();
+                }
+            } catch(IOException ioe){
+                ioe.printStackTrace();
+            }
         });
 
         mJMenuFile = new JMenu("File");
@@ -67,22 +74,22 @@ abstract class MyMenuBarBuilder extends JMenuBar{
 
         mCutItem = new JMenuItem("Cut");
         mCutItem.addActionListener(e->{
-
+            cutText();
         });
 
         mCopyItem = new JMenuItem("Copy");
         mCopyItem.addActionListener(e->{
-
+            copyText();
         });
 
         mPastItem = new JMenuItem("Past");
         mPastItem.addActionListener(e->{
-
+            pastText();
         });
 
         mDelItem = new JMenuItem("Delete");
         mDelItem.addActionListener(e->{
-
+            delText();
         });
 
         mMenuEdit = new JMenu("Edit");
@@ -94,22 +101,21 @@ abstract class MyMenuBarBuilder extends JMenuBar{
         mJMenuBar = new JMenuBar();
         mJMenuBar.add(mJMenuFile);
         mJMenuBar.add(mMenuEdit);
-        System.out.println("mJMenuBar.getComponentIndex(mJMenuFile)");
-        System.out.println(mJMenuBar.getComponentIndex(mJMenuFile));
-        System.out.println("mJMenuBar.getComponentIndex(mSaveFileItem");
-        System.out.println(mJMenuBar.getComponentIndex(mSaveFileItem));
-
         return mJMenuBar;
     }
+
+    protected abstract void delText();
+
+    protected abstract void pastText();
+
+    protected abstract void copyText();
+
+    protected abstract void cutText();
+
+    protected abstract String getFileDir();
 
     abstract void openFile(String fullFileName);
     abstract void saveFile();
     abstract void createTextArea();
     abstract void createOrRecreateFile(String fullFileName);
-
-    private String getFullFileNameFromFileDialog(){
-        FileDialog fd = new FileDialog(new JFrame(), " Save", FileDialog.SAVE);
-        fd.setVisible(true);
-        return fd.getDirectory().concat(fd.getFile());
-    }
 }

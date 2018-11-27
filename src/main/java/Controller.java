@@ -27,6 +27,10 @@ class Controller{
 
     public void run(){
         mGUI = new GUI(){
+            @Override String getDirOfExisting(){
+                return mFileManager.mFile.getAbsolutePath();
+            }
+
             @Override protected String getFileContent() throws IOException{
                 return mFileManager.getTextFromExistingFile();
             }

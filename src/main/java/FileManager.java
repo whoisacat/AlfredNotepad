@@ -31,8 +31,6 @@ public class FileManager{
 
     public String getTextFromExistingFile() throws IOException{
         BufferedReader br;
-        System.out.println("mFile.canRead()" + mFile.canRead());
-        System.out.println("mFile.exists()" + mFile.exists());
         br = new BufferedReader(new FileReader(mFile));
         String text = "";
         String s;
