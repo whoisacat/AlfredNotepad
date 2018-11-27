@@ -1,29 +1,62 @@
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 
 abstract class MyMenuBarBuilder extends JMenuBar{
 
-    private JMenuBar mJMenuBar;
-
-    private JMenu mJMenuFile;
-
-    private JMenuItem mCreateNewFileItem;
-    private JMenuItem mOpenExistingFileItem;
-    private JMenuItem mSaveFileItem;
-    private JMenuItem mSaveFileAsItem;
-
-    private JMenu mMenuEdit;
-
-    private JMenuItem mCutItem;
-    private JMenuItem mCopyItem;
-    private JMenuItem mPastItem;
-    private JMenuItem mDelItem;
+    abstract void delText();
+    abstract void pastText();
+    abstract void copyText();
+    abstract void cutText();
+    abstract String getFileDir();
+    abstract void openFile(String fullFileName);
+    abstract void saveFile();
+    abstract void createTextArea();
+    abstract void createOrRecreateFile(String fullFileName);
 
     public JMenuBar build(){
 
-        mCreateNewFileItem = new JMenuItem("Create new file");
-        mCreateNewFileItem.addActionListener(e->{
+        JMenu menuFile = createMenuFile();
+        JMenu menuEdit = createMenuEdit();
+
+        JMenuBar JMenuBar = new JMenuBar();
+        JMenuBar.add(menuFile);
+        JMenuBar.add(menuEdit);
+
+        return JMenuBar;
+    }
+
+    private JMenu createMenuEdit(){
+        JMenuItem cutItem = new JMenuItem("Cut");
+        cutItem.addActionListener(e->{
+            cutText();
+        });
+
+        JMenuItem copyItem = new JMenuItem("Copy");
+        copyItem.addActionListener(e->{
+            copyText();
+        });
+
+        JMenuItem pastItem = new JMenuItem("Past");
+        pastItem.addActionListener(e->{
+            pastText();
+        });
+
+        JMenuItem delItem = new JMenuItem("Delete");
+        delItem.addActionListener(e->{
+            delText();
+        });
+
+        JMenu menuEdit = new JMenu("Edit");
+        menuEdit.add(cutItem);
+        menuEdit.add(cutItem);
+        menuEdit.add(pastItem);
+        menuEdit.add(delItem);
+        return menuEdit;
+    }
+
+    private JMenu createMenuFile(){
+        JMenuItem createNewFileItem = new JMenuItem("Create new file");
+        createNewFileItem.addActionListener(e->{
             JFileChooser fileChooser = new JFileChooser();
             int ret = fileChooser.showDialog(null,"Ok");
             if(ret == JFileChooser.APPROVE_OPTION){
@@ -33,8 +66,8 @@ abstract class MyMenuBarBuilder extends JMenuBar{
             }
         });
 
-        mOpenExistingFileItem = new JMenuItem("Open existing file");
-        mOpenExistingFileItem.addActionListener(e->{
+        JMenuItem openExistingFileItem = new JMenuItem("Open existing file");
+        openExistingFileItem.addActionListener(e->{
 
             JFileChooser fileChooser = new JFileChooser();
             int ret = fileChooser.showOpenDialog(null);
@@ -48,11 +81,11 @@ abstract class MyMenuBarBuilder extends JMenuBar{
             }
         });
 
-        mSaveFileItem = new JMenuItem("Save file");
-        mSaveFileItem.addActionListener(e->saveFile());
+        JMenuItem saveFileItem = new JMenuItem("Save file");
+        saveFileItem.addActionListener(e->saveFile());
 
-        mSaveFileAsItem = new JMenuItem("Save file as...");
-        mSaveFileAsItem.addActionListener(e->{
+        JMenuItem saveFileAsItem = new JMenuItem("Save file as...");
+        saveFileAsItem.addActionListener(e->{
             try{
                 JFileChooser fileChooser = new JFileChooser(getFileDir());
                 if(fileChooser.showDialog(null,"Save as") == JFileChooser.APPROVE_OPTION){
@@ -65,57 +98,11 @@ abstract class MyMenuBarBuilder extends JMenuBar{
             }
         });
 
-        mJMenuFile = new JMenu("File");
-        System.out.println(mJMenuFile.getDisplayedMnemonicIndex());
-        mJMenuFile.add(mCreateNewFileItem);
-        mJMenuFile.add(mOpenExistingFileItem);
-        mJMenuFile.add(mSaveFileItem);
-        mJMenuFile.add(mSaveFileAsItem);
-
-        mCutItem = new JMenuItem("Cut");
-        mCutItem.addActionListener(e->{
-            cutText();
-        });
-
-        mCopyItem = new JMenuItem("Copy");
-        mCopyItem.addActionListener(e->{
-            copyText();
-        });
-
-        mPastItem = new JMenuItem("Past");
-        mPastItem.addActionListener(e->{
-            pastText();
-        });
-
-        mDelItem = new JMenuItem("Delete");
-        mDelItem.addActionListener(e->{
-            delText();
-        });
-
-        mMenuEdit = new JMenu("Edit");
-        mMenuEdit.add(mCutItem);
-        mMenuEdit.add(mCutItem);
-        mMenuEdit.add(mPastItem);
-        mMenuEdit.add(mDelItem);
-
-        mJMenuBar = new JMenuBar();
-        mJMenuBar.add(mJMenuFile);
-        mJMenuBar.add(mMenuEdit);
-        return mJMenuBar;
+        JMenu JMenuFile = new JMenu("File");
+        JMenuFile.add(createNewFileItem);
+        JMenuFile.add(openExistingFileItem);
+        JMenuFile.add(saveFileItem);
+        JMenuFile.add(saveFileAsItem);
+        return JMenuFile;
     }
-
-    protected abstract void delText();
-
-    protected abstract void pastText();
-
-    protected abstract void copyText();
-
-    protected abstract void cutText();
-
-    protected abstract String getFileDir();
-
-    abstract void openFile(String fullFileName);
-    abstract void saveFile();
-    abstract void createTextArea();
-    abstract void createOrRecreateFile(String fullFileName);
 }

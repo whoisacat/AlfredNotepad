@@ -1,16 +1,15 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 
 public abstract class GUI{
     private JFrame mJFrame;
-    private JMenuBar mMenuBar;
     private JTextArea mJTextArea;
-    private JScrollPane mJScrollPane;
 
     public GUI(){
 
-        mMenuBar = new MyMenuBarBuilder(){
+        JMenuBar menuBar = new MyMenuBarBuilder(){
 
             @Override protected void delText(){
                 mJTextArea.replaceSelection("");
@@ -53,13 +52,14 @@ public abstract class GUI{
         }.build();
 
         mJFrame = new JFrame("AlfredNotepad");
-        mJFrame.setJMenuBar(mMenuBar);
+        mJFrame.setBackground(Color.BLACK);
+        mJFrame.setForeground(Color.ORANGE);
+        mJFrame.setJMenuBar(menuBar);
         mJFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mJFrame.setSize(300, 300);
         mJFrame.setVisible(true);
         mJFrame.addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(WindowEvent e){
-
                 try{
                     if(!mJTextArea.getText().equals(getFileContent()))
                         onClosingWindow();
@@ -94,10 +94,15 @@ public abstract class GUI{
 
     private void makeWrightableTextArea(){
         mJTextArea = new JTextArea();
-        mJScrollPane = new JScrollPane(mJTextArea);
-        mJScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        mJScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        mJFrame.add(mJScrollPane);
+        JScrollPane JScrollPane = new JScrollPane(mJTextArea);
+        JScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        mJFrame.add(JScrollPane);
+        mJTextArea.setBackground(Color.black);
+        Font f = new Font(Font.MONOSPACED,Font.PLAIN,14);
+        mJTextArea.setFont(f);
+        mJTextArea.setForeground(Color.ORANGE);
+        mJTextArea.setCaretColor(Color.ORANGE);
         mJFrame.setVisible(true);
     }
 
